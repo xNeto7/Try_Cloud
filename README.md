@@ -1,4 +1,4 @@
-# FeetDrive Cloud
+# Cloud
 
 ![Clean & Simple Design](images/feetdrive.png)
 
@@ -28,7 +28,7 @@ Firstly, install all the needed modules, for that, you will need to install [pyt
 
 ## Usage
 
-If you would like to use this cloud, personally or commercially, please give us ([Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7), [Jiajie8](https://github.com/Jiajie8)) credit.
+If you would like to use this cloud, personally or commercially, please give us ([Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7) credit.
 
 But please don´t use long names as your Files, rename them.
 
@@ -47,7 +47,7 @@ If you have any issue, please don't hesitate to make a [issue](https://github.co
 
 ## Authors
 
-Smokez01, xNeto7, Jiajie8 - Initial work & all the project - [Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7), [Jiajie8](https://github.com/Jiajie8)
+Smokez01, xNeto7, Jiajie8 - Initial work & all the project - [Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7)
 
 ## License
 
