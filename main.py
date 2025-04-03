@@ -62,6 +62,7 @@ class FeetDriveApp:
     <style>
         body { font-family: Comic Sans MS, sans-serif; background-color: Navy; color: PaleVioletRed; text-align: center; }
         h1 { color: Lavender; }
+        input {text-align: center;}
         ul { list-style-type: none; padding: 0; }
         li { margin: 5px; padding: 10px; }
         a { color: PaleVioletRed; text-decoration: none; }
@@ -70,6 +71,7 @@ class FeetDriveApp:
 </head>
 <body>
     <img src="images/feetdrive.png" alt="FeetDrive Logo" width="1000">
+    <input type="file" />
     <ul>
 """
         # erstelle link liste für hochgeladene dateien
