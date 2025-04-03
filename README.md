@@ -1,4 +1,4 @@
-# FeetDrive Cloud
+# Cloud
 
 ![Clean & Simple Design](images/feetdrive.png)
 
@@ -47,7 +47,7 @@ If you have any issue, please don't hesitate to make a [issue](https://github.co
 
 ## Authors
 
-Smokez01, xNeto7, Jiajie8 - Initial work & all the project - [Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7), [Jiajie8](https://github.com/Jiajie8)
+Smokez01, xNeto7, Jiajie8 - Initial work & all the project - [Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7)
 
 ## License
 
