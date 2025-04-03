@@ -6,7 +6,7 @@
     <style>
         body { font-family: Comic Sans MS, sans-serif; background-color: Navy; color: PaleVioletRed; text-align: center; }
         h1 { color: Lavender; }
-        input, button {text-align: center;}
+        input { text-align: center; }
         ul { list-style-type: none; padding: 0; }
         li { margin: 5px; padding: 10px; }
         a { color: PaleVioletRed; text-decoration: none; }
@@ -14,35 +14,25 @@
     </style>
 </head>
 <body>
-    <h1>Hochgeladene Dateien:</h1>
-    
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    <h1>FeetDrive Cloud</h1>
+    <h3>Hochgeladene Dateien</h3>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <button type="submit">Datei hochladen</button>
+    </form>
 
     <ul>
         {% for file in files %}
             <li>
-                {{ file }}
-                <a href="{{ url_for('download_file', filename=file) }}">Download</a>
-                <form action="{{ url_for('delete_file') }}" method="POST" style="display:inline;">
+                <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
+                <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <button type="submit" onclick="return confirm('Möchtest du diese Datei wirklich löschen?')">Löschen</button>
+                    <button type="submit" style="background-color:red;color:white;">Löschen</button>
                 </form>
             </li>
         {% endfor %}
     </ul>
 
-    <h2>Datei hochladen:</h2>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <button type="submit">Hochladen</button>
-    </form>
 </body>
 </html>

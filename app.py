@@ -1,19 +1,20 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
-import subprocess
 import json
+import subprocess
 
 app = Flask(__name__)
 
-# Geheimschlüssel für Flash-Nachrichten
-app.secret_key = 'renas'
-
+# Konfiguration
 DATA_FOLDER = "data"
 DATA_FILE = "data.json"
+GITHUB_REPO_URL = "https://github.com/xNeto7/Try_Cloudeeee/tree/main/data"
 
+# Wenn der Ordner nicht existiert, erstelle ihn
 if not os.path.exists(DATA_FOLDER):
     os.makedirs(DATA_FOLDER)
 
+# Laden und Speichern der Daten
 def load_data():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r", encoding="utf-8") as file:
@@ -32,12 +33,9 @@ def cloud():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        flash("Keine Datei ausgewählt.")
         return redirect(request.url)
-    
     file = request.files['file']
     if file.filename == '':
-        flash("Keine Datei ausgewählt.")
         return redirect(request.url)
     
     # Speichern der Datei im Datenordner
@@ -50,25 +48,22 @@ def upload_file():
     save_data(data)
 
     # Git-Upload (optional)
-    try:
-        subprocess.run(["git", "add", DATA_FOLDER], check=True)
-        subprocess.run(["git", "commit", "-m", "update data"], check=True)
-        subprocess.run(["git", "push"], check=True)
-        flash("Datei erfolgreich hochgeladen und auf GitHub gepusht.")
-    except subprocess.CalledProcessError as e:
-        flash(f"Fehler beim Hochladen der Datei auf GitHub: {e}")
-    
+    subprocess.run(["git", "add", DATA_FOLDER], check=True)
+    subprocess.run(["git", "commit", "-m", "update data"], check=True)
+    subprocess.run(["git", "push"], check=True)
+
     return redirect(url_for('cloud'))
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    return send_from_directory(DATA_FOLDER, filename)
+    # Erstelle die GitHub-URL zum direkten Download der Datei
+    github_file_url = GITHUB_REPO_URL + filename
+    return redirect(github_file_url)
 
 @app.route('/delete', methods=['POST'])
 def delete_file():
     file_to_delete = request.form['file_to_delete']
     data = load_data()
-    
     if file_to_delete in data:
         file_path = os.path.join(DATA_FOLDER, file_to_delete)
         if os.path.exists(file_path):
@@ -80,11 +75,13 @@ def delete_file():
             except Exception as e:
                 flash(f"Fehler beim Löschen der Datei: {e}")
         else:
-            flash(f"Fehler: Datei '{file_to_delete}' existiert nicht im Verzeichnis.")
+            flash(f"Fehler: Datei '{file_to_delete}' existiert nicht.")
     else:
-        flash(f"Fehler: Datei '{file_to_delete}' wurde nicht in der Datenliste gefunden.")
+        flash(f"Datei '{file_to_delete}' wurde nicht gefunden.")
     
     return redirect(url_for('cloud'))
 
+# Wenn dies das Hauptmodul ist, starte den Server
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Flask so konfigurieren, dass es auf allen IP-Adressen (0.0.0.0) und Port 5000 läuft
+    app.run(debug=True, host='0.0.0.0', port=5000)
