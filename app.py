@@ -49,7 +49,7 @@ def upload_file():
     subprocess.run(["git", "commit", "-m", "update data"], check=True)
     subprocess.run(["git", "push"], check=True)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('cloud'))
 
 @app.route('/download/<filename>')
 def download_file(filename):
