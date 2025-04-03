@@ -4,6 +4,7 @@ import json
 import subprocess
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)  # Setzt einen zufälligen geheimen Schlüssel
 
 # Konfiguration
 DATA_FOLDER = "data"
@@ -35,7 +36,7 @@ def upload_file():
     if 'file' not in request.files:
         return redirect(request.url)
     file = request.files['file']
-    if file.filename == '': 
+    if file.filename == '':
         return redirect(request.url)
     
     # Speichern der Datei im Datenordner
@@ -63,32 +64,31 @@ def download_file(filename):
 @app.route('/delete', methods=['POST'])
 def delete_file():
     file_to_delete = request.form['file_to_delete']
-    print(f"Versuche, Datei '{file_to_delete}' zu löschen...")  # Debug-Ausgabe
     data = load_data()
 
     if file_to_delete in data:
-        file_path = os.path.join(DATA_FOLDER, file_to_delete)
-        print(f"Überprüfe, ob Datei existiert: {file_path}")  # Debug-Ausgabe
+        print(f"Versuche, Datei '{file_to_delete}' von GitHub zu löschen...")  # Debug-Ausgabe
 
-        if os.path.exists(file_path):
-            try:
-                os.remove(file_path)  # Datei löschen
-                print(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")  # Debug-Ausgabe
-                # Entferne die Datei aus der Liste und speichere die geänderten Daten
-                data = [f for f in data if f != file_to_delete]  # Entferne die Datei aus der Liste
-                save_data(data)
-                flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
-            except Exception as e:
-                print(f"Fehler beim Löschen der Datei: {e}")  # Fehlerbehandlung
-                flash(f"Fehler beim Löschen der Datei: {e}")
-        else:
-            print(f"Datei '{file_to_delete}' existiert nicht im Verzeichnis.")  # Debug-Ausgabe
-            flash(f"Fehler: Datei '{file_to_delete}' existiert nicht im Verzeichnis.")
+        try:
+            # GitHub-Datei entfernen
+            subprocess.run(["git", "rm", os.path.join(DATA_FOLDER, file_to_delete)], check=True)
+            subprocess.run(["git", "commit", "-m", f"Remove file {file_to_delete}"], check=True)
+            subprocess.run(["git", "push"], check=True)
+            print(f"Datei '{file_to_delete}' erfolgreich von GitHub gelöscht.")  # Debug-Ausgabe
+            
+            # Entfernen der Datei aus der JSON-Datenstruktur
+            data = [f for f in data if f != file_to_delete]
+            save_data(data)
+            flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
+        except Exception as e:
+            print(f"Fehler beim Löschen der Datei von GitHub: {e}")
+            flash(f"Fehler beim Löschen der Datei: {e}")
     else:
-        print(f"Datei '{file_to_delete}' wurde nicht in der Datenliste gefunden.")  # Debug-Ausgabe
         flash(f"Fehler: Datei '{file_to_delete}' wurde nicht in der Datenliste gefunden.")
     
-    return redirect(url_for('cloud'))
+    # Lade die aktualisierten Daten nach dem Löschen
+    files = load_data()
+    return render_template('cloud.html', files=files)  # Gibt die aktualisierte Ansicht zurück
 
 # Wenn dies das Hauptmodul ist, starte den Server
 if __name__ == '__main__':
