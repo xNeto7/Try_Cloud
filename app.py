@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, send_from_directory, redirect, url_for
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for, flash
 import os
-import shutil
-import json
 import subprocess
+import json
 
 app = Flask(__name__)
+
+# Geheimschlüssel für Flash-Nachrichten
+app.secret_key = 'renas'
 
 DATA_FOLDER = "data"
 DATA_FILE = "data.json"
@@ -30,9 +32,12 @@ def cloud():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
+        flash("Keine Datei ausgewählt.")
         return redirect(request.url)
+    
     file = request.files['file']
     if file.filename == '':
+        flash("Keine Datei ausgewählt.")
         return redirect(request.url)
     
     # Speichern der Datei im Datenordner
@@ -45,10 +50,14 @@ def upload_file():
     save_data(data)
 
     # Git-Upload (optional)
-    subprocess.run(["git", "add", DATA_FOLDER], check=True)
-    subprocess.run(["git", "commit", "-m", "update data"], check=True)
-    subprocess.run(["git", "push"], check=True)
-
+    try:
+        subprocess.run(["git", "add", DATA_FOLDER], check=True)
+        subprocess.run(["git", "commit", "-m", "update data"], check=True)
+        subprocess.run(["git", "push"], check=True)
+        flash("Datei erfolgreich hochgeladen und auf GitHub gepusht.")
+    except subprocess.CalledProcessError as e:
+        flash(f"Fehler beim Hochladen der Datei auf GitHub: {e}")
+    
     return redirect(url_for('cloud'))
 
 @app.route('/download/<filename>')
@@ -60,21 +69,20 @@ def delete_file():
     file_to_delete = request.form['file_to_delete']
     data = load_data()
     
-    # Überprüfen, ob die Datei existiert
     if file_to_delete in data:
-        # Datei löschen
         file_path = os.path.join(DATA_FOLDER, file_to_delete)
         if os.path.exists(file_path):
-            os.remove(file_path)
-        
-        # Dateiliste aktualisieren
-        data.remove(file_to_delete)
-        save_data(data)
-
-        # Git-Update
-        subprocess.run(["git", "add", DATA_FOLDER], check=True)
-        subprocess.run(["git", "commit", "-m", "delete data"], check=True)
-        subprocess.run(["git", "push"], check=True)
+            try:
+                os.remove(file_path)
+                data = [f for f in data if f != file_to_delete]
+                save_data(data)
+                flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
+            except Exception as e:
+                flash(f"Fehler beim Löschen der Datei: {e}")
+        else:
+            flash(f"Fehler: Datei '{file_to_delete}' existiert nicht im Verzeichnis.")
+    else:
+        flash(f"Fehler: Datei '{file_to_delete}' wurde nicht in der Datenliste gefunden.")
     
     return redirect(url_for('cloud'))
 

@@ -6,6 +6,7 @@
     <style>
         body { font-family: Comic Sans MS, sans-serif; background-color: Navy; color: PaleVioletRed; text-align: center; }
         h1 { color: Lavender; }
+        input, button {text-align: center;}
         ul { list-style-type: none; padding: 0; }
         li { margin: 5px; padding: 10px; }
         a { color: PaleVioletRed; text-decoration: none; }
@@ -13,29 +14,35 @@
     </style>
 </head>
 <body>
-    <h1>Willkommen bei FeetDrive Cloud</h1>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <label for="file">Datei hochladen:</label><br>
-        <input type="file" name="file" required><br><br>
-        <input type="submit" value="Hochladen">
-    </form>
-
-    <br><br>
+    <h1>Hochgeladene Dateien:</h1>
     
-    <h2>Hochgeladene Dateien:</h2>
-    <ul id="file-list">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <ul>
         {% for file in files %}
-            <li><a href="/download/{{ file }}">{{ file }}</a></li>
+            <li>
+                {{ file }}
+                <a href="{{ url_for('download_file', filename=file) }}">Download</a>
+                <form action="{{ url_for('delete_file') }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="file_to_delete" value="{{ file }}">
+                    <button type="submit" onclick="return confirm('Möchtest du diese Datei wirklich löschen?')">Löschen</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
 
-    <br><br>
-
-    <form action="/delete" method="POST">
-        <label for="file_to_delete">Datei zum Löschen eingeben:</label><br>
-        <input type="text" name="file_to_delete" required><br><br>
-        <input type="submit" value="Löschen">
+    <h2>Datei hochladen:</h2>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Hochladen</button>
     </form>
-
 </body>
 </html>
