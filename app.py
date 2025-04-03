@@ -23,7 +23,7 @@ def save_data(data):
         json.dump(data, file, indent=4)
 
 @app.route('/')
-def index():
+def cloud():
     files = load_data()
     return render_template('cloud.html', files=files)
 
@@ -76,7 +76,7 @@ def delete_file():
         subprocess.run(["git", "commit", "-m", "delete data"], check=True)
         subprocess.run(["git", "push"], check=True)
     
-    return redirect(url_for('index'))
+    return redirect(url_for('cloud'))
 
 if __name__ == '__main__':
     app.run(debug=True)
