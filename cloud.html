@@ -6,21 +6,38 @@
     <style>
         body { font-family: Comic Sans MS, sans-serif; background-color: Navy; color: PaleVioletRed; text-align: center; }
         h1 { color: Lavender; }
-        input {text-align: center;}
         ul { list-style-type: none; padding: 0; }
         li { margin: 5px; padding: 10px; }
         a { color: PaleVioletRed; text-decoration: none; }
         a:hover { text-decoration: underline; }
     </style>
+</head>
 <body>
+    <h1>Willkommen bei FeetDrive Cloud</h1>
     <img src="images/feetdrive.png" alt="FeetDrive Logo" width="1000">
-    <input type="file" />
-    <ul>
-        <li><a href="https://github.com/Smokez01/Projekt/raw/main/data/Algorithmus.py" target="_blank">Algorithmus.py</a></li>
-        <li><a href="https://github.com/Smokez01/Projekt/raw/main/data/test.py" target="_blank">test.py</a></li>
-        <li><a href="https://github.com/Smokez01/Projekt/raw/main/data/Pointer.docx" target="_blank">Pointer.docx</a></li>
-        <li><a href="https://github.com/Smokez01/Projekt/raw/main/data/Martin.jpg" target="_blank">Martin.jpg</a></li>
-        <li><a href="https://github.com/Smokez01/Projekt/raw/main/data/MatejaDenktErWaereSigma.png" target="_blank">MatejaDenktErWaereSigma.png</a></li>
+    
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="file">Datei hochladen:</label><br>
+        <input type="file" name="file" required><br><br>
+        <input type="submit" value="Hochladen">
+    </form>
+
+    <br><br>
+    
+    <h2>Hochgeladene Dateien:</h2>
+    <ul id="file-list">
+        {% for file in files %}
+            <li><a href="/download/{{ file }}">{{ file }}</a></li>
+        {% endfor %}
     </ul>
+
+    <br><br>
+
+    <form action="/delete" method="POST">
+        <label for="file_to_delete">Datei zum Löschen eingeben:</label><br>
+        <input type="text" name="file_to_delete" required><br><br>
+        <input type="submit" value="Löschen">
+    </form>
+
 </body>
 </html>
