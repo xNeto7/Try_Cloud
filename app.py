@@ -10,7 +10,6 @@ app.secret_key = os.urandom(24)  # Setzt einen zufälligen geheimen Schlüssel
 DATA_FOLDER = "data"
 DATA_FILE = "data.json"
 GITHUB_REPO_URL = "https://github.com/xNeto7/Try_Cloud/raw/main/data/"
-GITHUB_STATIC_URL = "https://raw.githubusercontent.com/xNeto7/Try_Cloud/main/static/images/"
 
 # Wenn der Ordner nicht existiert, erstelle ihn
 if not os.path.exists(DATA_FOLDER):
@@ -30,7 +29,7 @@ def save_data(data):
 @app.route('/')
 def cloud():
     files = load_data()
-    return render_template('cloud.html', files=files, github_static=GITHUB_STATIC_URL)
+    return render_template('cloud.html', files=files)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -89,9 +88,8 @@ def delete_file():
     
     # Lade die aktualisierten Daten nach dem Löschen
     files = load_data()
-    return render_template('cloud.html', files=files, github_static=GITHUB_STATIC_URL)
+    return render_template('cloud.html', files=files)  # Gibt die aktualisierte Ansicht zurück
 
-# Wenn dies das Hauptmodul ist, starte den Server
 if __name__ == '__main__':
     # Flask so konfigurieren, dass es auf allen IP-Adressen (0.0.0.0) und Port 5000 läuft
     app.run(debug=True, host='0.0.0.0', port=5000)

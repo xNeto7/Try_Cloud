@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Wichtige Meta-Tag für responsives Design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blondi</title>
     <style>
         body { 
@@ -26,18 +26,6 @@
             cursor: pointer;
         }
 
-        /* Responsive Hochlade-Button */
-        form button {
-            font-size: 20px;
-            padding: 15px 30px;
-            width: 220px;
-            background-color: black;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
         /* Flexbox für das UL und LI */
         ul { 
             list-style-type: none; 
@@ -54,7 +42,6 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            word-wrap: break-word; /* Verhindert, dass der Text über den Container hinausgeht */
         }
 
         a { 
@@ -66,7 +53,7 @@
             text-decoration: underline; 
         }
 
-        /* Lösch-Button Styling */
+        /* Löschen-Button */
         .delete-btn {
             background: none;
             border: none;
@@ -80,53 +67,13 @@
             width: 24px;
             height: 24px;
         }
-
-        /* MEDIA QUERY für kleinere Bildschirme (z.B. Handys) */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 30px; /* Kleinere Schrift für Handys */
-            }
-
-            form button {
-                width: 100%; /* Button auf volle Breite für mobile Geräte */
-                font-size: 16px;
-            }
-
-            li {
-                font-size: 20px; /* Kleinere Schrift für die Dateinamen */
-                padding: 5px; /* Weniger Padding auf kleinen Bildschirmen */
-            }
-
-            .delete-btn img {
-                width: 20px; /* Kleinere Symbole für Handys */
-                height: 20px;
-            }
-        }
-
-        /* MEDIA QUERY für größere Bildschirme (z.B. Tablets und PCs) */
-        @media (min-width: 601px) {
-            h1 {
-                font-size: 50px;
-            }
-
-            li {
-                font-size: 24px;
-                padding: 10px;
-            }
-
-            .delete-btn img {
-                width: 24px;
-                height: 24px;
-            }
-        }
     </style>
 </head>
 <body>
     <h1>Blond.inc</h1>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <button type="submit">Datei hochladen</button>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" onchange="this.form.submit()" />
     </form>
 
     <ul>
@@ -142,5 +89,12 @@
             </li>
         {% endfor %}
     </ul>
+
+    <script>
+        // Das Formular wird automatisch abgeschickt, wenn eine Datei ausgewählt wird
+        document.getElementById('fileInput').addEventListener('change', function() {
+            document.getElementById('uploadForm').submit();
+        });
+    </script>
 </body>
 </html>
