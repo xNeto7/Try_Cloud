@@ -92,5 +92,27 @@
             </li>
         {% endfor %}
     </ul>
+    <script>
+        // Auto-refresh der Dateiliste alle 5 Sekunden
+        setInterval(() => {
+            fetch('/files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileList = document.getElementById("file-list");
+                    fileList.innerHTML = "";
+                    files.forEach(file => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<a href="/download/${file}" target="_blank">${file}</a> 
+                            <form action="/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="file_to_delete" value="${file}">
+                                <button type="submit" class="trash-btn">
+                                    <img src="/static/images/Trash.png" alt="Löschen" class="trash-icon">
+                                </button>
+                            </form>`;
+                        fileList.appendChild(li);
+                    });
+                });
+        }, 5000); // Aktualisiert alle 5 Sekunden
+    </script>
 </body>
 </html>
