@@ -37,7 +37,7 @@
         <input type="file" id="file-upload" name="file" onchange="this.form.submit()">
     </form>
 
-    <ul>
+    <ul id="file-list">
         {% for file in files %}
             <li>
                 <a href="/data/{{ file }}" target="_blank">{{ file }}</a>
@@ -50,5 +50,28 @@
             </li>
         {% endfor %}
     </ul>
+
+    <script>
+        setInterval(() => {
+            fetch('/files') 
+                .then(response => response.json())
+                .then(files => {
+                    let fileList = document.querySelector("#file-list");
+                    fileList.innerHTML = ""; 
+
+                    files.forEach(file => {
+                        let li = document.createElement("li");
+                        li.innerHTML = `<a href="/data/${file}" target="_blank">${file}</a>
+                            <form action="/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="file_to_delete" value="${file}">
+                                <button type="submit" class="trash-btn">
+                                    <img src="/static/images/Trash.png" alt="Löschen" class="trash-icon">
+                                </button>
+                            </form>`;
+                        fileList.appendChild(li);
+                    });
+                });
+        }, 5000); // Alle 5 Sekunden aktualisieren
+    </script>
 </body>
 </html>
