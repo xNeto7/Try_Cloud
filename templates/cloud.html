@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Wichtige Meta-Tag für responsives Design -->
     <title>Blondi</title>
     <style>
         body { 
@@ -9,28 +10,13 @@
             background-color: #FFD39B; 
             color: PaleVioletRed; 
             text-align: center; 
+            margin: 0;
+            padding: 0;
         }
-        h1 { color: black; font-size: 50px; }
-        input { text-align: center; }
-        ul { 
-            list-style-type: none; 
-            padding: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
-        li { 
-            margin: 5px; 
-            padding: 10px; 
-            font-size: 24px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        a { color: gray; text-decoration: none; }
-        a:hover { text-decoration: underline; } 
 
-        /* Größerer Datei-Input */
+        h1 { color: black; font-size: 50px; margin-bottom: 20px; }
+
+        /* Responsive Datei-Input */
         input[type="file"] {
             font-size: 18px;
             padding: 10px;
@@ -40,7 +26,7 @@
             cursor: pointer;
         }
 
-        /* Größerer Hochlade-Button */
+        /* Responsive Hochlade-Button */
         form button {
             font-size: 20px;
             padding: 15px 30px;
@@ -52,20 +38,86 @@
             cursor: pointer;
         }
 
-        /* Flexbox für das Lösch-Icon und den Text */
+        /* Flexbox für das UL und LI */
+        ul { 
+            list-style-type: none; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        li { 
+            margin: 5px; 
+            padding: 10px; 
+            font-size: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            word-wrap: break-word; /* Verhindert, dass der Text über den Container hinausgeht */
+        }
+
+        a { 
+            color: gray; 
+            text-decoration: none; 
+        }
+
+        a:hover { 
+            text-decoration: underline; 
+        }
+
+        /* Lösch-Button Styling */
         .delete-btn {
             background: none;
             border: none;
             cursor: pointer;
-            display: flex;  /* Flexbox aktivieren */
-            align-items: center;  /* Vertikal zentrieren */
-            margin-left: 5px; /* Abstand nach links */
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
         }
 
         .delete-btn img {
             width: 24px;
             height: 24px;
-            margin-left: 5px; /* Verkleinert den Abstand zwischen dem Text und dem Bild */
+        }
+
+        /* MEDIA QUERY für kleinere Bildschirme (z.B. Handys) */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 30px; /* Kleinere Schrift für Handys */
+            }
+
+            form button {
+                width: 100%; /* Button auf volle Breite für mobile Geräte */
+                font-size: 16px;
+            }
+
+            li {
+                font-size: 20px; /* Kleinere Schrift für die Dateinamen */
+                padding: 5px; /* Weniger Padding auf kleinen Bildschirmen */
+            }
+
+            .delete-btn img {
+                width: 20px; /* Kleinere Symbole für Handys */
+                height: 20px;
+            }
+        }
+
+        /* MEDIA QUERY für größere Bildschirme (z.B. Tablets und PCs) */
+        @media (min-width: 601px) {
+            h1 {
+                font-size: 50px;
+            }
+
+            li {
+                font-size: 24px;
+                padding: 10px;
+            }
+
+            .delete-btn img {
+                width: 24px;
+                height: 24px;
+            }
         }
     </style>
 </head>
