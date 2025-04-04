@@ -2,30 +2,113 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xSmokez Cloud</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #FFD39B; color: #000; }
-        h1 { font-size: 40px; }
-        input[type="file"] { display: none; }
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background-color: #FFD39B; 
+            color: #000; 
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 { 
+            font-size: 2.5em;
+        }
+
+        input[type="file"] { 
+            display: none; 
+        }
+
         label {
             display: inline-block;
-            font-size: 20px;
+            font-size: 1.2em;
             padding: 15px 30px;
             background-color: black;
             color: white;
             border-radius: 10px;
             cursor: pointer;
+            margin-top: 20px;
         }
-        ul { list-style-type: none; padding: 0; }
-        li { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 24px; padding: 10px; }
+
+        ul { 
+            list-style-type: none; 
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        li { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            font-size: 1.2em; 
+            padding: 10px;
+            width: 100%;
+            max-width: 500px;
+            margin: 10px 0;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
         .trash-btn {
             background: none;
             border: none;
             cursor: pointer;
         }
+
         .trash-icon {
             width: 24px;
             height: 24px;
+        }
+
+        /* Media Query für kleinere Bildschirme (z.B. Handys) */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            label {
+                font-size: 1em;
+                padding: 12px 24px;
+            }
+
+            li {
+                font-size: 1em;
+                padding: 8px;
+            }
+
+            .trash-icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Media Query für größere Bildschirme (z.B. Tablets und PCs) */
+        @media (min-width: 601px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            label {
+                font-size: 1.2em;
+                padding: 15px 30px;
+            }
+
+            li {
+                font-size: 1.2em;
+                padding: 10px;
+            }
+
+            .trash-icon {
+                width: 24px;
+                height: 24px;
+            }
         }
     </style>
 </head>
@@ -73,6 +156,5 @@
                 });
         }, 5000); // Aktualisiert alle 5 Sekunden
     </script>
-
 </body>
 </html>
