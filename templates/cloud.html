@@ -4,13 +4,31 @@
     <meta charset="UTF-8">
     <title>Blondi</title>
     <style>
-        body { font-family: Comic Sans MS, sans-serif; background-color: #FFD39B; color: PaleVioletRed; text-align: center; }
+        body { 
+            font-family: Comic Sans MS, sans-serif; 
+            background-color: #FFD39B; 
+            color: PaleVioletRed; 
+            text-align: center; 
+        }
         h1 { color: black; font-size: 50px; }
         input { text-align: center; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin: 5px; padding: 10px; font-size: 24px; }
+        ul { 
+            list-style-type: none; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        li { 
+            margin: 5px; 
+            padding: 10px; 
+            font-size: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
         a { color: gray; text-decoration: none; }
-        a:hover { text-decoration: underline;} 
+        a:hover { text-decoration: underline; } 
 
         /* Größerer Datei-Input */
         input[type="file"] {
@@ -39,6 +57,7 @@
             background: none;
             border: none;
             cursor: pointer;
+            margin-left: 10px; /* Abstand zum Dateinamen */
         }
 
         .delete-btn img {
@@ -57,7 +76,7 @@
 
     <ul>
         {% for file in files %}
-            <li style="display: flex; align-items: center; gap: 8px;">
+            <li>
                 <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
@@ -68,6 +87,5 @@
             </li>
         {% endfor %}
     </ul>
-    
 </body>
 </html>
