@@ -1,16 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify
 import os
 import json
 import subprocess
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.urandom(24)  # Setzt einen zufälligen geheimen Schlüssel
 
 # Konfiguration
 DATA_FOLDER = "data"
 DATA_FILE = "data.json"
 GITHUB_REPO_URL = "https://github.com/xNeto7/Try_Cloud/raw/main/data/"
 
+# Wenn der Ordner nicht existiert, erstelle ihn
 if not os.path.exists(DATA_FOLDER):
     os.makedirs(DATA_FOLDER)
 
@@ -25,6 +26,16 @@ def save_data(data):
     with open(DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
 
+@app.route('/download/<filename>')
+def download_file(filename):
+    # Stellt die Datei direkt aus dem 'data'-Verzeichnis bereit
+    return send_from_directory(DATA_FOLDER, filename, as_attachment=True)
+
+@app.route('/files')
+def get_files():
+    files = load_data()  # Lade die Datei-Liste
+    return jsonify(files)  # Rückgabe der Dateien im JSON-Format
+
 @app.route('/')
 def cloud():
     files = load_data()
@@ -38,23 +49,21 @@ def upload_file():
     if file.filename == '':
         return redirect(request.url)
     
+    # Speichern der Datei im Datenordner
     file_path = os.path.join(DATA_FOLDER, file.filename)
     file.save(file_path)
     
+    # Daten aktualisieren und speichern
     data = load_data()
     data.append(file.filename)
     save_data(data)
 
+    # Git-Upload (optional)
     subprocess.run(["git", "add", DATA_FOLDER], check=True)
     subprocess.run(["git", "commit", "-m", "update data"], check=True)
     subprocess.run(["git", "push"], check=True)
 
     return redirect(url_for('cloud'))
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    github_file_url = GITHUB_REPO_URL + filename
-    return redirect(github_file_url)
 
 @app.route('/delete', methods=['POST'])
 def delete_file():
@@ -62,33 +71,29 @@ def delete_file():
     data = load_data()
 
     if file_to_delete in data:
+        print(f"Versuche, Datei '{file_to_delete}' von GitHub zu löschen...")  # Debug-Ausgabe
+
         try:
+            # GitHub-Datei entfernen
             subprocess.run(["git", "rm", os.path.join(DATA_FOLDER, file_to_delete)], check=True)
             subprocess.run(["git", "commit", "-m", f"Remove file {file_to_delete}"], check=True)
             subprocess.run(["git", "push"], check=True)
+            print(f"Datei '{file_to_delete}' erfolgreich von GitHub gelöscht.")  # Debug-Ausgabe
             
+            # Entfernen der Datei aus der JSON-Datenstruktur
             data = [f for f in data if f != file_to_delete]
             save_data(data)
             flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
         except Exception as e:
+            print(f"Fehler beim Löschen der Datei von GitHub: {e}")
             flash(f"Fehler beim Löschen der Datei: {e}")
     else:
-        flash(f"Fehler: Datei '{file_to_delete}' wurde nicht gefunden.")
+        flash(f"Fehler: Datei '{file_to_delete}' wurde nicht in der Datenliste gefunden.")
     
-    return redirect(url_for('cloud'))
-
-# API zum Laden der Datei-Liste
-@app.route('/files')
-def get_files():
+    # Lade die aktualisierten Daten nach dem Löschen
     files = load_data()
-    return jsonify(files)
+    return render_template('cloud.html', files=files)  # Gibt die aktualisierte Ansicht zurück
 
-# Verhindert Cache-Probleme
-@app.after_request
-def add_header(response):
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response.headers["Pragma"] = "no-cache"
-    return response
-
+# Wenn dies das Hauptmodul ist, starte den Server
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
