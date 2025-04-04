@@ -34,6 +34,17 @@
             cursor: pointer;
         }
 
+        /* Lösch-Button Styling */
+        .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .delete-btn img {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body>
@@ -50,18 +61,12 @@
                 <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <button type="submit" style="
-                        width: 32px; height: 32px;
-                        background: url('images/Trash.png') no-repeat center;
-                        background-size: contain;
-                        border: none; cursor: pointer;">
-                        <img src="github/Try_Cloud/images/Trash.png" alt="Löschen"></button>
+                    <button type="submit" class="delete-btn">
+                        <img src="{{ github_static }}Trash.png" alt="Löschen">
                     </button>
                 </form>
-                
             </li>
         {% endfor %}
     </ul>
-
 </body>
 </html>
