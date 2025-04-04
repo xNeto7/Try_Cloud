@@ -2,53 +2,114 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>xSmokez Cloud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blondi</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #FFD39B; color: #000; }
-        h1 { font-size: 40px; }
-        input[type="file"] { display: none; }
-        label {
-            display: inline-block;
-            font-size: 20px;
-            padding: 15px 30px;
-            background-color: black;
-            color: white;
+        body { 
+            font-family: Comic Sans MS, sans-serif; 
+            background-color: #FFD39B; 
+            color: PaleVioletRed; 
+            text-align: center; 
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 { color: black; font-size: 50px; margin-bottom: 20px; }
+
+        /* Responsive Datei-Input */
+        input[type="file"] {
+            font-size: 18px;
+            padding: 10px;
+            border: 2px solid PaleVioletRed;
             border-radius: 10px;
+            background-color: white;
             cursor: pointer;
         }
-        ul { list-style-type: none; padding: 0; }
-        li { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 24px; padding: 10px; }
-        .trash-btn {
+
+        /* Flexbox für das UL und LI */
+        ul { 
+            list-style-type: none; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        li { 
+            margin: 5px; 
+            padding: 10px; 
+            font-size: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+
+        a { 
+            color: gray; 
+            text-decoration: none; 
+        }
+
+        a:hover { 
+            text-decoration: underline; 
+        }
+
+        /* Löschen-Button */
+        .delete-btn {
             background: none;
             border: none;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
         }
-        .trash-icon {
+
+        .delete-btn img {
             width: 24px;
             height: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>📂 Cloud Upload</h1>
+    <h1>xSmokez Cloud</h1>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <label for="file-upload">📤 Datei auswählen</label>
-        <input type="file" id="file-upload" name="file" onchange="this.form.submit()">
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" onchange="this.form.submit()" />
     </form>
 
-    <ul>
-        {% for file in files %}
-            <li>
-                <a href="/data/{{ file }}" target="_blank">{{ file }}</a>
-                <form action="/delete" method="post" style="display:inline;">
-                    <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <button type="submit" class="trash-btn">
-                        <img src="/static/images/Trash.png" alt="Löschen" class="trash-icon">
-                    </button>
-                </form>
-            </li>
-        {% endfor %}
+    <ul id="fileList">
+        <!-- Dateien werden hier angezeigt -->
     </ul>
+
+    <script>
+        // Funktion zum Abrufen der neuesten Datei-Liste und Aktualisieren der HTML
+        function updateFileList() {
+            fetch('/files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileListElement = document.getElementById('fileList');
+                    fileListElement.innerHTML = '';  // Löscht die vorherige Liste
+                    files.forEach(file => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <a href="/download/${file}" target="_blank">${file}</a>
+                            <form action="/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="file_to_delete" value="${file}">
+                                <button type="submit" class="delete-btn">
+                                    <img src="https://raw.githubusercontent.com/xNeto7/Try_Cloud/main/static/images/Trash.png" alt="Löschen">
+                                </button>
+                            </form>
+                        `;
+                        fileListElement.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Fehler beim Abrufen der Dateiliste:', error));
+        }
+
+        // Alle 5 Sekunden die Datei-Liste aktualisieren
+        setInterval(updateFileList, 5000);
+
+        // Initiale Datei-Liste sofort abrufen
+        updateFileList();
+    </script>
 </body>
 </html>
