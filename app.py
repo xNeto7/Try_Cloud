@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import os
 import json
 import subprocess
@@ -28,8 +28,9 @@ def save_data(data):
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    # Stellt die Datei direkt aus dem 'data'-Verzeichnis bereit
-    return send_from_directory(DATA_FOLDER, filename, as_attachment=True)
+    # Erstelle die GitHub-URL zum direkten Download der Datei
+    github_file_url = GITHUB_REPO_URL + filename
+    return redirect(github_file_url)
 
 @app.route('/files')
 def get_files():
