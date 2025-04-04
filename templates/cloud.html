@@ -50,8 +50,14 @@
                 <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <button type="submit" image="images/Trash.png"></button>
+                    <button type="submit" style="
+                        width: 32px; height: 32px;
+                        background: url('images/Trash.png') no-repeat center;
+                        background-size: contain;
+                        border: none; cursor: pointer;">
+                    </button>
                 </form>
+                
             </li>
         {% endfor %}
     </ul>
