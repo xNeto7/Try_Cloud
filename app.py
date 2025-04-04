@@ -90,6 +90,13 @@ def delete_file():
     files = load_data()
     return render_template('cloud.html', files=files)  # Gibt die aktualisierte Ansicht zurück
 
+# Route zum Abrufen der Dateiliste als JSON
+@app.route('/files')
+def get_files():
+    files = load_data()  # Lade die Datei-Liste
+    return json.dumps(files)  # Rückgabe der Dateien im JSON-Format
+
+# Wenn dies das Hauptmodul ist, starte den Server
 if __name__ == '__main__':
     # Flask so konfigurieren, dass es auf allen IP-Adressen (0.0.0.0) und Port 5000 läuft
     app.run(debug=True, host='0.0.0.0', port=5000)

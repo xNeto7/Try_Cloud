@@ -76,26 +76,40 @@
         <input type="file" name="file" id="fileInput" onchange="this.form.submit()" />
     </form>
 
-    <ul>
-        {% for file in files %}
-            <li>
-                <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
-                <form action="/delete" method="post" style="display:inline;">
-                    <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <!-- Mülleimer-Button mit Bild von GitHub -->
-                    <button type="submit" class="delete-btn">
-                        <img src="https://raw.githubusercontent.com/xNeto7/Try_Cloud/main/static/images/Trash.png" alt="Löschen">
-                    </button>
-                </form>
-            </li>
-        {% endfor %}
+    <ul id="fileList">
+        <!-- Dateien werden hier angezeigt -->
     </ul>
 
     <script>
-        // Das Formular wird automatisch abgeschickt, wenn eine Datei ausgewählt wird
-        document.getElementById('fileInput').addEventListener('change', function() {
-            document.getElementById('uploadForm').submit();
-        });
+        // Funktion zum Abrufen der neuesten Datei-Liste und Aktualisieren der HTML
+        function updateFileList() {
+            fetch('/files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileListElement = document.getElementById('fileList');
+                    fileListElement.innerHTML = '';  // Löscht die vorherige Liste
+                    files.forEach(file => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <a href="/download/${file}" target="_blank">${file}</a>
+                            <form action="/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="file_to_delete" value="${file}">
+                                <button type="submit" class="delete-btn">
+                                    <img src="https://raw.githubusercontent.com/xNeto7/Try_Cloud/main/static/images/Trash.png" alt="Löschen">
+                                </button>
+                            </form>
+                        `;
+                        fileListElement.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Fehler beim Abrufen der Dateiliste:', error));
+        }
+
+        // Alle 5 Sekunden die Datei-Liste aktualisieren
+        setInterval(updateFileList, 5000);
+
+        // Initiale Datei-Liste sofort abrufen
+        updateFileList();
     </script>
 </body>
 </html>
