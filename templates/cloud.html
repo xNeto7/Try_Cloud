@@ -57,7 +57,7 @@
 
     <ul>
         {% for file in files %}
-            <li>
+            <li style="display: flex; align-items: center; gap: 8px;">
                 <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
@@ -68,5 +68,6 @@
             </li>
         {% endfor %}
     </ul>
+    
 </body>
 </html>
