@@ -50,10 +50,8 @@
             font-size: 1.2em; 
             padding: 10px;
             width: 100%;
-            max-width: 500px;
-            margin: 10px 0;
-            background-color: #fff;
-            border-radius: 8px;
+            border: none;  /* Entfernt den Rahmen um die Listenelemente */
+            background-color: transparent;
         }
 
         .trash-btn {
@@ -67,48 +65,9 @@
             height: 24px;
         }
 
-        /* Media Query für kleinere Bildschirme (z.B. Handys) */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            label {
-                font-size: 1em;
-                padding: 12px 24px;
-            }
-
-            li {
-                font-size: 1em;
-                padding: 8px;
-            }
-
-            .trash-icon {
-                width: 20px;
-                height: 20px;
-            }
-        }
-
-        /* Media Query für größere Bildschirme (z.B. Tablets und PCs) */
-        @media (min-width: 601px) {
-            h1 {
-                font-size: 2.5em;
-            }
-
-            label {
-                font-size: 1.2em;
-                padding: 15px 30px;
-            }
-
-            li {
-                font-size: 1.2em;
-                padding: 10px;
-            }
-
-            .trash-icon {
-                width: 24px;
-                height: 24px;
-            }
+        /* Optional: Styling für das Hovering über den Mülleimer-Button */
+        .trash-btn:hover {
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -120,10 +79,10 @@
         <input type="file" id="file-upload" name="file" onchange="this.form.submit()">
     </form>
 
-    <ul id="file-list">
+    <ul>
         {% for file in files %}
             <li>
-                <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
+                <a href="/data/{{ file }}" target="_blank">{{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
                     <button type="submit" class="trash-btn">
@@ -133,28 +92,5 @@
             </li>
         {% endfor %}
     </ul>
-
-    <script>
-        // Auto-refresh der Dateiliste alle 5 Sekunden
-        setInterval(() => {
-            fetch('/files')
-                .then(response => response.json())
-                .then(files => {
-                    const fileList = document.getElementById("file-list");
-                    fileList.innerHTML = "";
-                    files.forEach(file => {
-                        const li = document.createElement("li");
-                        li.innerHTML = `<a href="/download/${file}" target="_blank">${file}</a> 
-                            <form action="/delete" method="post" style="display:inline;">
-                                <input type="hidden" name="file_to_delete" value="${file}">
-                                <button type="submit" class="trash-btn">
-                                    <img src="/static/images/Trash.png" alt="Löschen" class="trash-icon">
-                                </button>
-                            </form>`;
-                        fileList.appendChild(li);
-                    });
-                });
-        }, 5000); // Aktualisiert alle 5 Sekunden
-    </script>
 </body>
 </html>
