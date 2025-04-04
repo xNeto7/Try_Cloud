@@ -8,7 +8,7 @@
         h1 { color: black; font-size: 50px; }
         input { text-align: center; }
         ul { list-style-type: none; padding: 0; }
-        li { margin: 5px; padding: 10px; font-size: 10px; }
+        li { margin: 5px; padding: 10px; font-size: 24px; }
         a { color: gray; text-decoration: none; }
         a:hover { text-decoration: underline;} 
 
@@ -50,7 +50,7 @@
                 <a href="/download/{{ file }}" target="_blank">{{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <button type="submit" style="background-color:red;color:white;">Löschen</button>
+                    <button type="submit" style="background-color:red;color:white; size: 10px;">Löschen</button>
                 </form>
             </li>
         {% endfor %}
