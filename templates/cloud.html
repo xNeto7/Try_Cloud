@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xSmokez Cloud</title>
     <style>
-        body {
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background: linear-gradient(45deg, black, pink);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #000; 
             margin: 0;
             height: 100vh;
-            background: linear-gradient(45deg, #ff6ec7, black);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
+            padding: 0;
         }
-
-        /* Die Animation */
-        @keyframes gradientAnimation {
+                /* Die Animation */
+                @keyframes gradientAnimation {
             0% {
                 background-position: 0% 50%;
             }
