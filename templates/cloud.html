@@ -5,16 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xSmokez Cloud</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            background-image: url('/static/images/feetdrive.png'); 
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #000; 
+        body {
             margin: 0;
-            padding: 0;
+            height: 100vh;
+            background: linear-gradient(45deg, #ff6ec7, black);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        /* Die Animation */
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         h1 { 
