@@ -16,8 +16,8 @@
             height: 100vh;
             padding: 0;
         }
-                /* Die Animation */
-                @keyframes gradientAnimation {
+
+        @keyframes gradientAnimation {
             0% {
                 background-position: 0% 50%;
             }
@@ -32,6 +32,7 @@
         h1 { 
             font-size: 2.5em;
             margin-top: 30px;
+            color: white;
         }
 
         input[type="file"] { 
@@ -66,6 +67,7 @@
             font-size: 1.2em; 
             padding: 10px;
             width: 100%;
+            color: white;
         }
 
         .trash-btn {
@@ -82,6 +84,15 @@
         .trash-btn:hover {
             opacity: 0.7;
         }
+
+        a.download-link {
+            color: white;
+            text-decoration: none;
+        }
+
+        a.download-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -95,7 +106,7 @@
     <ul>
         {% for file in files %}
             <li>
-                <a href="/uploads/{{ file }}" target="_blank">{{ file }}</a>
+                <a class="download-link" href="{{ url_for('download_file', filename=file) }}" target="_blank">📥 {{ file }}</a>
                 <form action="/delete" method="post" style="display:inline;">
                     <input type="hidden" name="file_to_delete" value="{{ file }}">
                     <button type="submit" class="trash-btn">
