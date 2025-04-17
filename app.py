@@ -1,132 +1,106 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_session import Session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
 import json
-import subprocess
 
 app = Flask(__name__)
-
-# Flask-Session-Konfiguration
-app.config['SESSION_TYPE'] = 'filesystem'  # Speichern der Session auf dem Server
-app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SESSION_PERMANENT'] = False  # Session soll nicht dauerhaft sein
-app.config['SESSION_USE_SIGNER'] = True  # Zusätzliche Sicherheit
-
-Session(app)  # Flask-Session initialisieren
+app.secret_key = os.urandom(24)  # Setzt einen zufälligen geheimen Schlüssel
 
 # Konfiguration
-DATA_FOLDER = "data"
-DATA_FILE = "data.json"
-GITHUB_REPO_URL = "https://github.com/xNeto7/Try_Cloud/raw/main/data/"
+USER_DATA_FOLDER = "user_data"
 
 # Wenn der Ordner nicht existiert, erstelle ihn
-if not os.path.exists(DATA_FOLDER):
-    os.makedirs(DATA_FOLDER)
+if not os.path.exists(USER_DATA_FOLDER):
+    os.makedirs(USER_DATA_FOLDER)
 
-# Laden und Speichern der Daten
-def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r", encoding="utf-8") as file:
+# Daten für jeden Benutzer speichern
+def load_user_data(username):
+    user_folder = os.path.join(USER_DATA_FOLDER, username)
+    if not os.path.exists(user_folder):
+        os.makedirs(user_folder)
+    user_data_file = os.path.join(user_folder, "data.json")
+    
+    if os.path.exists(user_data_file):
+        with open(user_data_file, "r", encoding="utf-8") as file:
             return json.load(file)
     return []
 
-def save_data(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as file:
+def save_user_data(username, data):
+    user_folder = os.path.join(USER_DATA_FOLDER, username)
+    user_data_file = os.path.join(user_folder, "data.json")
+    
+    with open(user_data_file, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        # Hier kannst du eine tatsächliche Überprüfung der Benutzerdaten durchführen
-        session['username'] = username
-        session['logged_in'] = True
-        flash(f"Willkommen, {username}!")
-        return redirect(url_for('cloud'))
-    return render_template('login.html')
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    # Lösche nur die aktuelle Session
-    session.pop('username', None)
-    session.pop('logged_in', None)
-    flash("Abgemeldet.")
-    return redirect(url_for('login'))
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    # Erstelle die GitHub-URL zum direkten Download der Datei
-    github_file_url = GITHUB_REPO_URL + filename
-    return redirect(github_file_url)
-
-@app.route('/files')
-def get_files():
-    files = load_data()  # Lade die Datei-Liste
-    return jsonify(files)  # Rückgabe der Dateien im JSON-Format
 
 @app.route('/')
 def cloud():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))  # Wenn nicht eingeloggt, zur Login-Seite umleiten
+    if 'username' not in session:
+        return redirect(url_for('login'))
     
-    files = load_data()
+    username = session['username']
+    files = load_user_data(username)
     return render_template('cloud.html', files=files)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    
     if 'file' not in request.files:
         return redirect(request.url)
+    
     file = request.files['file']
     if file.filename == '':
         return redirect(request.url)
     
-    # Speichern der Datei im Datenordner
-    file_path = os.path.join(DATA_FOLDER, file.filename)
+    # Datei speichern im Ordner des Benutzers
+    user_folder = os.path.join(USER_DATA_FOLDER, username)
+    file_path = os.path.join(user_folder, file.filename)
     file.save(file_path)
     
     # Daten aktualisieren und speichern
-    data = load_data()
-    data.append(file.filename)
-    save_data(data)
-
-    # Git-Upload (optional)
-    subprocess.run(["git", "add", DATA_FOLDER], check=True)
-    subprocess.run(["git", "commit", "-m", "update data"], check=True)
-    subprocess.run(["git", "push"], check=True)
+    files = load_user_data(username)
+    files.append(file.filename)
+    save_user_data(username, files)
 
     return redirect(url_for('cloud'))
 
 @app.route('/delete', methods=['POST'])
 def delete_file():
-    file_to_delete = request.form['file_to_delete']
-    data = load_data()
-
-    if file_to_delete in data:
-        print(f"Versuche, Datei '{file_to_delete}' von GitHub zu löschen...")  # Debug-Ausgabe
-
-        try:
-            # GitHub-Datei entfernen
-            subprocess.run(["git", "rm", os.path.join(DATA_FOLDER, file_to_delete)], check=True)
-            subprocess.run(["git", "commit", "-m", f"Remove file {file_to_delete}"], check=True)
-            subprocess.run(["git", "push"], check=True)
-            print(f"Datei '{file_to_delete}' erfolgreich von GitHub gelöscht.")  # Debug-Ausgabe
-            
-            # Entfernen der Datei aus der JSON-Datenstruktur
-            data = [f for f in data if f != file_to_delete]
-            save_data(data)
-            flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
-        except Exception as e:
-            print(f"Fehler beim Löschen der Datei von GitHub: {e}")
-            flash(f"Fehler beim Löschen der Datei: {e}")
-    else:
-        flash(f"Fehler: Datei '{file_to_delete}' wurde nicht in der Datenliste gefunden.")
+    if 'username' not in session:
+        return redirect(url_for('login'))
     
-    # Lade die aktualisierten Daten nach dem Löschen
-    files = load_data()
-    return render_template('cloud.html', files=files)  # Gibt die aktualisierte Ansicht zurück
+    username = session['username']
+    file_to_delete = request.form['file_to_delete']
+    
+    files = load_user_data(username)
+    if file_to_delete in files:
+        file_path = os.path.join(USER_DATA_FOLDER, username, file_to_delete)
+        os.remove(file_path)
+        
+        # Entfernen der Datei aus der Liste
+        files = [f for f in files if f != file_to_delete]
+        save_user_data(username, files)
+        flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
+    else:
+        flash(f"Fehler: Datei '{file_to_delete}' wurde nicht gefunden.")
+    
+    return redirect(url_for('cloud'))
 
-# Wenn dies das Hauptmodul ist, starte den Server
+# Login- und Logout-Funktionen
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        session['username'] = username
+        return redirect(url_for('cloud'))
+    return render_template('login.html')
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
