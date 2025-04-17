@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 import os
 import json
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Setzt einen zufälligen geheimen Schlüssel
@@ -88,19 +89,68 @@ def delete_file():
     
     return redirect(url_for('cloud'))
 
+@app.route('/download/<filename>')
+def download_file(filename):
+    username = session['username']
+    file_path = os.path.join(USER_DATA_FOLDER, username, filename)
+    if os.path.exists(file_path):
+        return send_from_directory(directory=os.path.dirname(file_path), filename=filename)
+    else:
+        flash("Datei nicht gefunden.")
+        return redirect(url_for('cloud'))
+
 # Login- und Logout-Funktionen
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
-        session['username'] = username
-        return redirect(url_for('cloud'))
+        password = request.form['password']
+        
+        # Überprüfen, ob der Benutzer existiert
+        user_folder = os.path.join(USER_DATA_FOLDER, username)
+        if os.path.exists(user_folder):
+            # Überprüfe das Passwort
+            with open(os.path.join(user_folder, 'password.txt'), 'r') as f:
+                stored_password_hash = f.read().strip()
+                if check_password_hash(stored_password_hash, password):
+                    session['username'] = username
+                    return redirect(url_for('cloud'))
+                else:
+                    flash("Falsches Passwort.")
+        else:
+            flash("Benutzername existiert nicht.")
+    
     return render_template('login.html')
 
 @app.route('/logout', methods=['POST'])
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Überprüfe, ob der Benutzer bereits existiert
+        user_folder = os.path.join(USER_DATA_FOLDER, username)
+        if os.path.exists(user_folder):
+            flash("Benutzername ist bereits vergeben.")
+            return redirect(url_for('login'))
+        
+        # Benutzerordner erstellen
+        os.makedirs(user_folder)
+        
+        # Passwort sicher speichern
+        password_hash = generate_password_hash(password)
+        with open(os.path.join(user_folder, 'password.txt'), 'w') as f:
+            f.write(password_hash)
+        
+        flash("Benutzer erfolgreich registriert!")
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
