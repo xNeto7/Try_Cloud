@@ -4,15 +4,13 @@ import json
 import subprocess
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Setzt einen zufälligen geheimen Schlüssel
+app.secret_key = os.urandom(24)
 
 # Konfiguration
 DATA_FOLDER = "data"
-DATA_FILE = "data.json"
 USERS_FILE = "users.json"
 GITHUB_REPO_URL = "https://github.com/xNeto7/Try_Cloud/raw/main/data/"
 
-# Wenn der Ordner nicht existiert, erstelle ihn
 if not os.path.exists(DATA_FOLDER):
     os.makedirs(DATA_FOLDER)
 
@@ -28,16 +26,25 @@ def speichere_nutzer(users):
     with open(USERS_FILE, 'w') as f:
         json.dump(users, f)
 
-# Daten laden/speichern
+def get_user_folder(username):
+    folder = os.path.join(DATA_FOLDER, username)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    return folder
 
-def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r", encoding="utf-8") as file:
+def get_user_data_file(username):
+    return os.path.join(get_user_folder(username), "data.json")
+
+def load_data(username):
+    data_file = get_user_data_file(username)
+    if os.path.exists(data_file):
+        with open(data_file, "r", encoding="utf-8") as file:
             return json.load(file)
     return []
 
-def save_data(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as file:
+def save_data(username, data):
+    data_file = get_user_data_file(username)
+    with open(data_file, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4)
 
 # Authentifizierung
@@ -85,62 +92,79 @@ def logout():
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    github_file_url = GITHUB_REPO_URL + filename
-    return redirect(github_file_url)
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    user_folder = get_user_folder(session['username'])
+    file_path = os.path.join(user_folder, filename)
+    if os.path.exists(file_path):
+        return redirect(GITHUB_REPO_URL + session['username'] + '/' + filename)
+    else:
+        flash("Datei nicht gefunden.")
+        return redirect(url_for('cloud'))
 
 @app.route('/files')
 def get_files():
-    files = load_data()
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    files = load_data(session['username'])
     return jsonify(files)
 
 @app.route('/')
 def cloud():
     if 'username' not in session:
         return redirect(url_for('login'))
-    files = load_data()
+    files = load_data(session['username'])
     return render_template('cloud.html', files=files)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     if 'file' not in request.files:
         return redirect(request.url)
     file = request.files['file']
     if file.filename == '':
         return redirect(request.url)
 
-    file_path = os.path.join(DATA_FOLDER, file.filename)
+    username = session['username']
+    user_folder = get_user_folder(username)
+    file_path = os.path.join(user_folder, file.filename)
     file.save(file_path)
 
-    data = load_data()
+    data = load_data(username)
     data.append(file.filename)
-    save_data(data)
+    save_data(username, data)
 
-    subprocess.run(["git", "add", DATA_FOLDER], check=True)
-    subprocess.run(["git", "commit", "-m", "update data"], check=True)
+    subprocess.run(["git", "add", user_folder], check=True)
+    subprocess.run(["git", "commit", "-m", f"{username} update data"], check=True)
     subprocess.run(["git", "push"], check=True)
 
     return redirect(url_for('cloud'))
 
 @app.route('/delete', methods=['POST'])
 def delete_file():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     file_to_delete = request.form['file_to_delete']
-    data = load_data()
+    username = session['username']
+    user_folder = get_user_folder(username)
+    data = load_data(username)
 
     if file_to_delete in data:
         try:
-            subprocess.run(["git", "rm", os.path.join(DATA_FOLDER, file_to_delete)], check=True)
-            subprocess.run(["git", "commit", "-m", f"Remove file {file_to_delete}"], check=True)
+            subprocess.run(["git", "rm", os.path.join(user_folder, file_to_delete)], check=True)
+            subprocess.run(["git", "commit", "-m", f"{username} remove file {file_to_delete}"], check=True)
             subprocess.run(["git", "push"], check=True)
 
             data = [f for f in data if f != file_to_delete]
-            save_data(data)
+            save_data(username, data)
             flash(f"Datei '{file_to_delete}' wurde erfolgreich gelöscht.")
         except Exception as e:
             flash(f"Fehler beim Löschen der Datei: {e}")
     else:
         flash(f"Fehler: Datei '{file_to_delete}' wurde nicht gefunden.")
 
-    files = load_data()
+    files = load_data(username)
     return render_template('cloud.html', files=files)
 
 if __name__ == '__main__':
