@@ -93,9 +93,23 @@
         a.download-link:hover {
             text-decoration: underline;
         }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .logout-btn:hover {
+            background-color: darkred;
+        }
     </style>
 
-    <!-- 🔁 Automatischer Seiten-Reload alle 5 Sekunden -->
     <script>
         setInterval(() => {
             location.reload();
@@ -108,6 +122,11 @@
     <form action="/upload" method="post" enctype="multipart/form-data">
         <label for="file-upload">📤 Datei auswählen</label>
         <input type="file" id="file-upload" name="file" onchange="this.form.submit()">
+    </form>
+
+    <!-- Abmelden-Button -->
+    <form action="{{ url_for('logout') }}" method="post">
+        <button type="submit" class="logout-btn">Abmelden</button>
     </form>
 
     <ul>
