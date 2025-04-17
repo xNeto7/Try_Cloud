@@ -138,7 +138,7 @@
 <body>
 
     {% if session.get('logged_in') %}
-        <h1>Willkommen, {{ session['username'] }}!</h1>
+        <h1>Willkommen zur xSmokez Cloud, {{ session['username'] }}!</h1>
 
         <!-- Abmeldebutton -->
         <form action="{{ url_for('logout') }}" method="post">
