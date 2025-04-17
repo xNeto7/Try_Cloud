@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrieren - xSmokez Cloud</title>
     <style>
-        /* Stil für das Registrierungsformular */
+        /* Gleiches Design wie die Cloud-Seite */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -19,12 +19,23 @@
         }
 
         @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
-        h1 { font-size: 2.5em; margin-top: 30px; color: white; }
+        h1 { 
+            font-size: 2.5em;
+            margin-top: 30px;
+            color: white;
+        }
+
         input[type="text"], input[type="password"] {
             padding: 10px;
             margin: 10px;
@@ -43,19 +54,42 @@
             font-size: 1.2em;
         }
 
-        button:hover { background-color: darkred; }
-        a { color: white; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        button:hover {
+            background-color: darkred;
+        }
 
+        a {
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile-Stile */
         @media (max-width: 768px) {
-            h1 { font-size: 3em; }
-            input[type="text"], input[type="password"], button { width: 90%; }
+            h1 {
+                font-size: 3em;
+            }
+
+            input[type="text"], input[type="password"], button {
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
+
     <h1>Registrieren - xSmokez Cloud</h1>
+
     <form action="/register" method="post">
         <input type="text" name="username" placeholder="Benutzername" required>
         <input type="password" name="password" placeholder="Passwort" required>
-        <button type="submit">Registrieren</button
+        <button type="submit">Registrieren</button>
+    </form>
+
+    <p>Bereits ein Konto? <a href="{{ url_for('login') }}">Einloggen</a></p>
+
+</body>
+</html>
