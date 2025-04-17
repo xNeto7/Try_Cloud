@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xSmokez Cloud</title>
     <style>
+        /* Standard-Stile für den PC */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -35,6 +36,7 @@
             color: white;
         }
 
+        /* Stile für den Abmeldebutton */
         .logout-btn {
             background-color: red;
             color: white;
@@ -109,15 +111,15 @@
             text-decoration: underline;
         }
 
-        /* Mobile-Stile */
+        /* Mobile-Stile (nur für Handys) */
         @media (max-width: 768px) {
             h1 {
-                font-size: 3em;
+                font-size: 3em; /* Größerer Titel auf Handys */
             }
 
             input[type="file"], label, .logout-btn {
-                width: 90%;
-                font-size: 1.5em;
+                width: 90%;  /* Etwas breitere Felder und Button auf Handys */
+                font-size: 1.5em;  /* Größerer Text auf Handys */
             }
 
             body {
@@ -135,8 +137,8 @@
 </head>
 <body>
 
-    {% if session.get('username') %}
-        <h1>Willkommen, {{ session['username'] }}!</h1>
+    {% if session.get('logged_in') %}
+        <h1>Willkommen zur xSmokez Cloud, {{ session['username'] }}!</h1>
 
         <!-- Abmeldebutton -->
         <form action="{{ url_for('logout') }}" method="post">

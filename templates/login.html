@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Anmeldung - xSmokez Cloud</title>
     <style>
         /* Gleiches Design wie die Cloud-Seite */
+=======
+    <title>Login - xSmokez Cloud</title>
+    <style>
+        /* Standard-Stile für den PC */
+>>>>>>> parent of 128898d (afafw)
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -16,6 +22,27 @@
             margin: 0;
             height: 100vh;
             padding: 0;
+<<<<<<< HEAD
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        h1 { 
+            font-size: 2.5em;
+            margin-top: 30px;
+            color: white;
+=======
+>>>>>>> parent of 128898d (afafw)
         }
 
         @keyframes gradientAnimation {
@@ -36,12 +63,21 @@
             color: white;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"] { 
             padding: 10px;
+<<<<<<< HEAD
             margin: 10px;
             width: 80%;
             border: none;
             border-radius: 5px;
+=======
+            font-size: 1.2em;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 400px;
+>>>>>>> parent of 128898d (afafw)
         }
 
         button {
@@ -52,12 +88,18 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1.2em;
+<<<<<<< HEAD
+=======
+            width: 80%;
+            max-width: 400px;
+>>>>>>> parent of 128898d (afafw)
         }
 
         button:hover {
             background-color: darkred;
         }
 
+<<<<<<< HEAD
         a {
             color: white;
             text-decoration: none;
@@ -75,13 +117,32 @@
 
             input[type="text"], input[type="password"], button {
                 width: 90%;
+=======
+        /* Mobile-Stile (nur für Handys) */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3em; /* Größerer Titel auf Handys */
+            }
+
+            input[type="text"], input[type="password"], button {
+                width: 90%;  /* Etwas breitere Felder und Button auf Handys */
+                font-size: 1.5em;  /* Größerer Text auf Handys */
+            }
+
+            body {
+                padding: 20px;
+>>>>>>> parent of 128898d (afafw)
             }
         }
     </style>
 </head>
 <body>
+<<<<<<< HEAD
 
     <h1>Anmelden - xSmokez Cloud</h1>
+=======
+    <h1>Login</h1>
+>>>>>>> parent of 128898d (afafw)
 
     <form action="/login" method="post">
         <input type="text" name="username" placeholder="Benutzername" required>
