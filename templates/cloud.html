@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xSmokez Cloud</title>
     <style>
+        /* Standard-Stile für den PC */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -33,6 +34,22 @@
             font-size: 2.5em;
             margin-top: 30px;
             color: white;
+        }
+
+        /* Stile für den Abmeldebutton */
+        .logout-btn {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .logout-btn:hover {
+            background-color: darkred;
         }
 
         input[type="file"] { 
@@ -94,22 +111,24 @@
             text-decoration: underline;
         }
 
-        .logout-btn {
-            padding: 5px 10px;
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.2em;
-            margin-top: 20px;
-        }
+        /* Mobile-Stile (nur für Handys) */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3em; /* Größerer Titel auf Handys */
+            }
 
-        .logout-btn:hover {
-            background-color: darkred;
+            input[type="file"], label, .logout-btn {
+                width: 90%;  /* Etwas breitere Felder und Button auf Handys */
+                font-size: 1.5em;  /* Größerer Text auf Handys */
+            }
+
+            body {
+                padding: 20px;
+            }
         }
     </style>
 
+    <!-- Automatischer Seiten-Reload alle 5 Sekunden -->
     <script>
         setInterval(() => {
             location.reload();
@@ -117,30 +136,39 @@
     </script>
 </head>
 <body>
-    <h1>xSmokez Cloud</h1>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <label for="file-upload">📤 Datei auswählen</label>
-        <input type="file" id="file-upload" name="file" onchange="this.form.submit()">
-    </form>
+    {% if session.get('logged_in') %}
+        <h1>Willkommen, {{ session['username'] }}!</h1>
 
-    <!-- Abmelden-Button -->
-    <form action="{{ url_for('logout') }}" method="post">
-        <button type="submit" class="logout-btn">Abmelden</button>
-    </form>
+        <!-- Abmeldebutton -->
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-btn">Abmelden</button>
+        </form>
 
-    <ul>
-        {% for file in files %}
-            <li>
-                <a class="download-link" href="{{ url_for('download_file', filename=file) }}" target="_blank">📥 {{ file }}</a>
-                <form action="/delete" method="post" style="display:inline;">
-                    <input type="hidden" name="file_to_delete" value="{{ file }}">
-                    <button type="submit" class="trash-btn">
-                        <img src="/static/images/Trash.png" alt="Löschen" class="trash-icon">
-                    </button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+        <!-- Datei hochladen -->
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="file-upload">📤 Datei auswählen</label>
+            <input type="file" id="file-upload" name="file" onchange="this.form.submit()">
+        </form>
+
+        <!-- Liste der Dateien -->
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a class="download-link" href="{{ url_for('download_file', filename=file) }}" target="_blank">📥 {{ file }}</a>
+                    <form action="/delete" method="post" style="display:inline;">
+                        <input type="hidden" name="file_to_delete" value="{{ file }}">
+                        <button type="submit" class="trash-btn">
+                            <img src="/static/images/Trash.png" alt="Löschen" class="trash-icon">
+                        </button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h1>Du bist nicht eingeloggt!</h1>
+        <a href="{{ url_for('login') }}">Einloggen</a>
+    {% endif %}
+
 </body>
 </html>
