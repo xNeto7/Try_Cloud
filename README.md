@@ -17,7 +17,7 @@ Firstly, install all the needed modules, for that, you will need to install [pyt
 1. #### Clone the repository
    
    ```bash
-   git clone https://github.com/Smokez01/FeetDrive
+   git clone https://github.com/xNeto7/Try_Cloud
    ```
    
 2. #### Install Dependencies:
@@ -43,12 +43,12 @@ Any pull request's are welcome!
 
 ## Issues
 
-If you have any issue, please don't hesitate to make a [issue](https://github.com/Smokez01/Projekt/issues), we will gladly take a look at it and try to fix it!
+If you have any issue, please don't hesitate to make a [issue](https://github.com/xNeto7/Projekt/issues), we will gladly take a look at it and try to fix it!
 
 ## Authors
 
-Smokez01, xNeto7, Jiajie8 - Initial work & all the project - [Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7)
+Smokez01, xNeto7 - Initial work & all the project - [Smokez01](https://github.com/Smokez01), [xNeto7](https://github.com/xNeto7)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/Smokez01/Projekt/blob/main/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/xNeto7/Projekt/blob/main/LICENSE) file for details
