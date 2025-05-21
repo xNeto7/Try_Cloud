@@ -43,7 +43,7 @@ Any pull request's are welcome!
 
 ## Issues
 
-If you have any issue, please don't hesitate to make a [issue](https://github.com/xNeto7/Projekt/issues), we will gladly take a look at it and try to fix it!
+If you have any issue, please don't hesitate to make a [issue](https://(https://github.com/xNeto7/Try_Cloud/issues)), we will gladly take a look at it and try to fix it!
 
 ## Authors
 
